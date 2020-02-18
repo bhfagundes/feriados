@@ -121,9 +121,8 @@ class FeriadosController extends Controller
         $teste3 = explode('\n', $teste2[0]);
         $feriados=[];
         $teste4= explode('<span class="style_lista_', $teste3[0]);
-       
         // posicoes de 1 a sizeof -1
-        for ($i =1; $i < sizeof($teste4)-1;$i++)
+        for ($i =1; $i < sizeof($teste4);$i++)
         {
             //posicao 0 data
             $teste5 = explode(' - ',$teste4[$i]);
