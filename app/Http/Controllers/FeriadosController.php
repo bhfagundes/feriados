@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Ixudra\Curl\Facades\Curl;
 use App\Model\Estados;
 use App\Model\Cidades;
+use Illuminate\Http\Request;
 class FeriadosController extends Controller
 {
     /**
@@ -31,7 +32,7 @@ class FeriadosController extends Controller
         $teste4= explode('<span class="style_lista_', $teste3[0]);
        
         // posicoes de 1 a sizeof -1
-        for ($i =1; $i < sizeof($teste4)-1;$i++)
+        for ($i =1; $i < sizeof($teste4);$i++)
         {
             //posicao 0 data
             $teste5 = explode(' - ',$teste4[$i]);
@@ -59,7 +60,7 @@ class FeriadosController extends Controller
         }
         return response()->json($feriados);
     }
-    public function getEstaduais($sigla)
+    public function feriadosEstaduais($sigla)
     {
         $estados = Estados::where('sigla','=',strtoupper($sigla))->first();
         $nomeEstado = $arquivo = str_replace(" ", "_", $estados->nome);
@@ -77,7 +78,7 @@ class FeriadosController extends Controller
         $teste4= explode('<span class="style_lista_', $teste3[0]);
        
         // posicoes de 1 a sizeof -1
-        for ($i =1; $i < sizeof($teste4)-1;$i++)
+        for ($i =1; $i < sizeof($teste4);$i++)
         {
             //posicao 0 data
             $teste5 = explode(' - ',$teste4[$i]);
@@ -103,12 +104,33 @@ class FeriadosController extends Controller
             $feriados[$i]['data'] =$data;
             $feriados[$i]['tipo'] =$tipo;
         }
+        return $feriados;
+    }
+    public function getEstaduais($sigla)
+    {
+        $feriados = $this->feriadosEstaduais($sigla);
         return response()->json($feriados);
     }
-    public function getMunicipais($sigla, $cidade)
+    public function validaTipoFeriado($data,$feriados)
+    {
+        $flag = 1;
+        for($i=1; $i<=sizeof($feriados);$i++)
+        {
+            
+            if($data == $feriados[$i]['data'])
+            {
+                $flag =0;
+                $i=sizeof($feriados);
+            }
+        }
+        return $flag;
+    }
+    public function feriadosMunicipais($sigla, $cidade)
     {
         $estados = Estados::where('sigla','=',strtoupper($sigla))->first();
         $nomeEstado = $arquivo = str_replace(" ", "_", $estados->nome);
+        $feriadosGerais = $this->feriadosEstaduais($sigla);
+        $atributos;
         $url = 'http://www.feriados.com.br/feriados-' . strtolower(str_replace(" ", "_", $cidade)).  '-' . $sigla.'.php'; 
         $curl = curl_init();
         curl_setopt_array($curl, [
@@ -144,11 +166,36 @@ class FeriadosController extends Controller
                 $nome = "Feriado Municipal";
 
             }
-            $feriados[$i]['nome'] =$nome;
-            $feriados[$i]['data'] =$data;
-            $feriados[$i]['tipo'] =$tipo;
+            if($this->validaTipoFeriado($data,$feriadosGerais) ==1)
+            {
+                $atributos['nome'] =$nome;
+                $atributos['data'] =$data;
+                $atributos['tipo'] =$tipo;
+                array_push($feriados,$atributos);
+            }
+            
         }
+        return $feriados;
+    }
+    public function getMunicipais($sigla, $cidade)
+    {
+        $feriados = $this->feriadosMunicipais($sigla,$cidade);
         return response()->json($feriados);
+    }
+    public function getEspecificos(Request $request)
+    {
+        $cidades = $request->all();
+
+        $cidades =json_encode($cidades);
+        $cidades =  json_decode($cidades);
+        $data=[];
+        for($i=0; $i<sizeof($cidades->cidades);$i++)
+        {
+            $data[$i]['uf']=$cidades->cidades[$i]->uf;
+            $data[$i]['cidade']=$cidades->cidades[$i]->cidade;
+            $data[$i]['feriados']= $this->feriadosMunicipais($cidades->cidades[$i]->uf,$cidades->cidades[$i]->cidade);
+        }
+        return response()->json($data);
     }
 
 }
