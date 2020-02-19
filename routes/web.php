@@ -22,6 +22,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
     $router->get('feriados/{sigla}/{cidade}',  ['uses' => 'FeriadosController@getMunicipais']);
 
-    $router->post('feriados/especificos',  ['uses' => 'FeriadosController@getEspecificos']);
-    
+    $router->post('feriados/municipiosEspecificos',  ['uses' => 'FeriadosController@getMunicipiosEspecificos']);
+
+    $router->post('feriados/estadosEspecificos',  ['uses' => 'FeriadosController@getEstadosEspecificos']);
   });

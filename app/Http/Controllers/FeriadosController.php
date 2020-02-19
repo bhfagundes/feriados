@@ -16,7 +16,7 @@ class FeriadosController extends Controller
     {
         //
     }
-    public function getNacionais()
+    public function feriadosNacionais()
     {
         $curl = curl_init();
         curl_setopt_array($curl, [
@@ -58,12 +58,18 @@ class FeriadosController extends Controller
             $feriados[$i]['data'] =$data;
             $feriados[$i]['tipo'] =$tipo;
         }
+        return $feriados;
+    }
+    public function getNacionais()
+    {
+        $feriados = $this->feriadosNacionais();
         return response()->json($feriados);
     }
     public function feriadosEstaduais($sigla)
     {
         $estados = Estados::where('sigla','=',strtoupper($sigla))->first();
         $nomeEstado = $arquivo = str_replace(" ", "_", $estados->nome);
+        $feriadosGerais = $this->feriadosNacionais();
         $url ='http://www.feriados.com.br/feriados-estado-' . strtolower($nomeEstado). '-' . $sigla.'.php';
         $curl = curl_init();
         curl_setopt_array($curl, [
@@ -100,9 +106,14 @@ class FeriadosController extends Controller
                 $nome = "Feriado Municipal";
 
             }
-            $feriados[$i]['nome'] =$nome;
-            $feriados[$i]['data'] =$data;
-            $feriados[$i]['tipo'] =$tipo;
+            if($this->validaTipoFeriado($data,$feriadosGerais) ==1)
+            {
+                $atributos['nome'] =$nome;
+                $atributos['data'] =$data;
+                $atributos['tipo'] =$tipo;
+                array_push($feriados,$atributos);
+            }
+        
         }
         return $feriados;
     }
@@ -186,10 +197,9 @@ class FeriadosController extends Controller
         $feriados = $this->feriadosMunicipais($sigla,$cidade);
         return response()->json($feriados);
     }
-    public function getEspecificos(Request $request)
+    public function getMunicipiosEspecificos(Request $request)
     {
         $cidades = $request->all();
-
         $cidades =json_encode($cidades);
         $cidades =  json_decode($cidades);
         $data=[];
@@ -198,6 +208,21 @@ class FeriadosController extends Controller
             $data[$i]['uf']=$cidades->cidades[$i]->uf;
             $data[$i]['cidade']=$cidades->cidades[$i]->cidade;
             $data[$i]['feriados']= $this->feriadosMunicipais($cidades->cidades[$i]->uf,$cidades->cidades[$i]->cidade);
+        }
+        return response()->json($data);
+    }
+    public function getEstadosEspecificos(Request $request)
+    {
+        $estados = $request->all();
+        $estados =json_encode($estados);
+        $estados =  json_decode($estados);
+        $data = [];
+        for($i=0; $i<sizeof($estados->estados);$i++)
+        {
+            $data[$i]['uf']=$estados->estados[$i]->UF;
+            $data[$i]['feriados']= $this->feriadosEstaduais($estados->estados[$i]->UF);
+            //$data[$i]['cidade']=$cidades->cidades[$i]->cidade;
+            //$data[$i]['feriados']= $this->feriadosMunicipais($cidades->cidades[$i]->uf,$cidades->cidades[$i]->cidade);
         }
         return response()->json($data);
     }
