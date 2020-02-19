@@ -128,10 +128,14 @@ class FeriadosController extends Controller
     public function feriadosMunicipais($sigla, $cidade)
     {
         $estados = Estados::where('sigla','=',strtoupper($sigla))->first();
+        $cid = $cidade;
         $nomeEstado = $arquivo = str_replace(" ", "_", $estados->nome);
         $feriadosGerais = $this->feriadosEstaduais($sigla);
         $atributos;
-        $url = 'http://www.feriados.com.br/feriados-' . strtolower(str_replace(" ", "_", $cidade)).  '-' . $sigla.'.php'; 
+        $cidade= preg_replace(array("/(á|à|ã|â|ä)/","/(Á|À|Ã|Â|Ä)/","/(é|è|ê|ë)/","/(É|È|Ê|Ë)/","/(í|ì|î|ï)/","/(Í|Ì|Î|Ï)/","/(ó|ò|õ|ô|ö)/","/(Ó|Ò|Õ|Ô|Ö)/","/(ú|ù|û|ü)/","/(Ú|Ù|Û|Ü)/","/(ñ)/","/(Ñ)/"),explode(" ","a A e E i I o O u U n N"),$cidade);
+        $cidade = str_replace(" ", "_", $cidade);
+        $cidade = str_replace("ç", "c", $cidade);
+        $url = 'http://www.feriados.com.br/feriados-' . strtolower( $cidade).  '-' . $sigla.'.php'; 
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,
