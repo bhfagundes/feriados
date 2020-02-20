@@ -1,16 +1,17 @@
 # Criação da API para obter feriados
     Foi construída uma api de forma obter feriados municipais, estaduais, nacionais. 
     Atualmente contamos com 3 endpoints para a API:
-## /feriados
-    Este endpoint retorna apenas os feriados nacionais para o ano em vigência
+## /feriados/{ano}
+    Este endpoint retorna apenas os feriados nacionais para o ano especificado na url
 
-## /feriados/{sigla}
-    Este endpoint retorna os feriados nacionais e estaduais. O parâmetro sigla, é a sigla do estado que se pretende obter os feriados.
+## /feriados/{ano}/{sigla}
+    Este endpoint retorna os feriados estaduais. O parâmetro sigla, é a sigla do estado que se pretende obter os feriados. O parametro {ano} serve para setar o ano que deseja obter o resultado
 
-## /feriados/{sigla}/{cidade}   
-    Este endpoint retorna os feriados nacionais, estaduais e municipais. O parâmetro sigla, é a sigla do estado desejado. O parâmetro cidade é o nome da cidade pertencente ao estado anterior em que se deseja obter os feriados.
-## /feriados/estadosEspecificos
-    Este endpoint retorna apenas os feriados estaduais dos estados especificados. O método de requisição deverá ser post e deverá ser enviado um json como párâmetro no modelo:
+## /feriados/{ano}/{sigla}/{cidade}   
+    Este endpoint retorna os feriados municipais. O parâmetro sigla, é a sigla do estado desejado. O parâmetro cidade é o nome da cidade pertencente ao estado anterior em que se deseja obter os feriados. O parâmetro ano seta o ano em que se deseja obter os resultados
+## /feriados/{ano}/estadosEspecificos
+    Este endpoint retorna apenas os feriados estaduais dos estados especificados. 
+    O parâmetro ano seta o ano em que se deseja obter os resultados. O método de requisição deverá ser post e deverá ser enviado um json como párâmetro no modelo:
     {
     "estados": [
         {
@@ -23,8 +24,8 @@
             "UF": "SP"
         }]
     }
-## feriados/municipiosEspecificos    
-    Este endpoint retorna apenas os feriados municipais dos municipios especificados. O método de requisição deverá ser post e deverá ser enviado um json como párâmetro no modelo:
+## feriados/{ano}/municipiosEspecificos    
+    Este endpoint retorna apenas os feriados municipais dos municipios especificados. O parâmetro ano seta o ano em que se deseja obter os resultados. O método de requisição deverá ser post e deverá ser enviado um json como párâmetro no modelo:
 
     {
     "cidades": [
