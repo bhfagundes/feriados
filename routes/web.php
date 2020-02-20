@@ -16,13 +16,13 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'api'], function () use ($router) {
-    $router->get('feriados',  ['uses' => 'FeriadosController@getNacionais']);
+    $router->get('feriados/{ano}',  ['uses' => 'FeriadosController@getNacionais']);
 
-    $router->get('feriados/{sigla}',  ['uses' => 'FeriadosController@getEstaduais']);
+    $router->get('feriados/{ano}/{sigla}',  ['uses' => 'FeriadosController@getEstaduais']);
 
-    $router->get('feriados/{sigla}/{cidade}',  ['uses' => 'FeriadosController@getMunicipais']);
+    $router->get('feriados/{ano}/{sigla}/{cidade}',  ['uses' => 'FeriadosController@getMunicipais']);
 
-    $router->post('feriados/municipiosEspecificos',  ['uses' => 'FeriadosController@getMunicipiosEspecificos']);
+    $router->post('feriados/{ano}/municipiosEspecificos',  ['uses' => 'FeriadosController@getMunicipiosEspecificos']);
 
-    $router->post('feriados/estadosEspecificos',  ['uses' => 'FeriadosController@getEstadosEspecificos']);
+    $router->post('feriados/{ano}/estadosEspecificos',  ['uses' => 'FeriadosController@getEstadosEspecificos']);
   });
