@@ -171,7 +171,6 @@ class FeriadosController extends Controller
         $feriados=[];
         $teste4= explode('<span class="style_lista_', $teste3[0]);
         // posicoes de 1 a sizeof -1
-        
         for ($i =1; $i < sizeof($teste4);$i++)
         {
             //posicao 0 data
@@ -180,9 +179,21 @@ class FeriadosController extends Controller
             $data_aux = explode('">',$teste5[0]);
             $tipo = $data_aux[0]; 
             $data = $data_aux[1];
+            
             if(sizeof($exp2) ==2)
             {
                 $nome = $exp2[0];
+                $exp_aux = explode(';">',$exp2[0]);
+                if(sizeof($exp_aux) > 1)
+                {
+                    $exp_fim = explode('</a>',$exp_aux[1]);
+                    if (sizeof ($exp_fim) > 0)
+                    {
+                        $nome = $exp_fim[0];
+                    }
+                   
+                }
+               
             }
             else
             {
