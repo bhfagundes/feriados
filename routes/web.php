@@ -25,4 +25,6 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->post('feriados/{ano}/municipiosEspecificos',  ['uses' => 'FeriadosController@getMunicipiosEspecificos']);
 
     $router->post('feriados/{ano}/estadosEspecificos',  ['uses' => 'FeriadosController@getEstadosEspecificos']);
-  });
+  
+    $router->get('teste',  ['uses' => 'FeriadosController@setarNacionais']);
+});
