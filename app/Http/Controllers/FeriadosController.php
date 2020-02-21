@@ -273,6 +273,8 @@ class FeriadosController extends Controller
         $nomes[10]='Dia de Finados';
         $nomes[11]='Proclamação da República';
         $nomes[12]='Natal';
+        $nomes[13]='Terça de Carnaval';
+        $nomes[14]='Sexta-feira Santa';
         $this->feriadosNac = $nomes;
         return ;
 
